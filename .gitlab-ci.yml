@@ -1,0 +1,20 @@
+stages:
+  - build
+  - test
+build:
+  image: rikorose/gcc-cmake:gcc-11
+  stage: build
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+  artifacts:
+  expire_in: 1 hrs
+  paths:
+    - build/
+test:
+  image: rikorose/gcc-cmake:gcc-11
+  stage: test
+  script:
+    - 'echo "1 + 2 * 4 / 2 - 3.5 #" | build/cpp_calculator'
