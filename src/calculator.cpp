@@ -8,21 +8,29 @@
  * @version 0.1.0
  ***************************************************************************/
 
-#include <stdio.h>
+#include <iostream>
 #include "calculator.h"
+using namespace std;
 
 
 
 int Calculator::run(){
-    char operation;
+    // declare variables
     double operand;
-    printf("\n\n------------ Calculator ------------\n\n\n");
+    double& ref = operand; // reference on operand
+    Operation operation;
+    cout << "\n\n------------ Calculator ------------\n\n\n";
+    cout << "Warning: operation entered must match exactly one of the operations available.\n\n";
     getFirstOperand();
     while(true){
-        operation = getOperation();
-        Operation op = bindToOperation(operation);
-        operand = getOperand();
-        operate(op,operand);
+        operation = bindToOperation();
+        if (operation == Operation::EXIT) break;
+        while(operation == Operation::UNKNOWN) {
+            operation = bindToOperation();
+        }
+        ref = getOperand();
+        operate(operation,ref);
     }
+    cout << "Exiting program...";
     return 0;
-} // end run()
+}

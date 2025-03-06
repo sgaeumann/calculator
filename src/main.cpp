@@ -8,12 +8,13 @@
  * @version 0.1.0
  ***************************************************************************/
 
-#include <stdio.h>
+#include <iostream>
 #include "calculator.h"
+using namespace std;
 
 int main(){
-  printf("starting calculator program...");
+  cout << "starting calculator program..." << endl;
   Calculator *cl = new Calculator();
-  cl->run();
+  cl->run(); delete cl;
   return 0;
 }

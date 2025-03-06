@@ -1,5 +1,5 @@
 /****************************************************************************
-* @file calculator.hpp
+* @file calculator.h
  * @author Sarah Gäumann <sarah.gaeumann@edu.hefr.ch>
  *
  * @brief Calculator class header
@@ -7,54 +7,57 @@
  * @date 2025-03-05
  * @version 0.1.0
  ***************************************************************************/
+#pragma once
 
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#ifndef CALCULATOR_H
-#define CALCULATOR_H
+#include <iostream>
+#include <limits>
+using namespace std;
 
 enum class Operation : char {
-  ADD=(int)'+',SUB=(int)'-',MULT=(int)'*',DIV=(int)'/',EXIT=(int)'#',UNKNOWN
+  ADD='+',SUB='-',MULT='*',DIV='/',EXIT='#',UNKNOWN
 };
 
 class Calculator{
   private:
     double operand = 1.0; // default value
   public:
-    ~Calculator();
+    ~Calculator() = default;
     int run();
 
     void add(const double x){
       operand = operand+x;
-      printf("%f\n",operand);
+      cout << "Result: " << operand << endl;
     }
 
     void subtract(const double x){
       operand = operand-x;
-      printf("%f\n",operand);
+      cout << "Result: " << operand << endl;
     }
 
     void multiply(const double x){
       operand = operand*x;
-      printf("%f\n",operand);
+      cout << "Result: " << operand << endl;
     }
 
     void divide(const double x){
       if(x==0) {
-        printf("Error: division by 0! Skipped\n");
+        cout << "Error: division by 0! Skipped" << endl;
         return;
       }
       operand = operand / x;
-      printf("%f\n",operand);
+      cout << "Result: " << operand << endl;
     }
 
     void getFirstOperand() {
         double op;
         printf("Enter the first operand: ");
-        scanf("%lf",&op);
-        getchar(); // remove newline
+        while(1) {
+          if(cin >> op) break; // valid number
+          // else not a valid number
+          cin.clear(); cin.ignore(numeric_limits<streamsize>::max(), '\n');
+          cout << "Invalid input. Please enter a numerical value: ";
+        }
         operand = op;
       }
 
@@ -62,12 +65,11 @@ class Calculator{
      *
      * @return char corresponding to operation
      */
-    char getOperation() {
+    static char getOperation() {
       char operation;
-      printf("Enter the operation:\n");
-      printf("+ \t- \t* \t/ \t# to exit\n");
-      scanf("%c",&operation);
-      getchar(); // remove newline
+      cout <<"Enter the operation:" << endl;
+      cout <<"+ \t- \t* \t/ \t# to exit" << endl;
+      cin >> operation;
       return operation;
     }
 
@@ -75,20 +77,24 @@ class Calculator{
      * gets the user's input and binds it to operand
      * @return operand
      */
-    double getOperand() {
+    static double getOperand() {
       double operand;
-      printf("Enter the operand: ");
-      scanf("%lf",&operand);
-      getchar(); // remove newline
+      cout << "Enter the operand: ";
+      while (!(cin >> operand)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Please enter a numerical value: ";
+      }
       return operand;
     }
 
     /**
-     * binds user's input to an operation
-     * @param c input from user
+     * binds user's input to an Operation
      * @return corresponding operation
+     * @see enum class Operation
      */
-    Operation bindToOperation(char c) {
+    static Operation bindToOperation() {
+      char c = getOperation();
       switch(c) {
         case('+'):
           return Operation::ADD;
@@ -99,13 +105,11 @@ class Calculator{
         case('/'):
           return Operation::DIV;
         case('#'):
-          printf("Exiting program...");
-          exit(0);
+          return Operation::EXIT;
         default:
-          printf("Unknown operator.\n");
+          cout << "Unknown operator. Please enter a valid one." << endl;
           return Operation::UNKNOWN;
       }
-      return Operation::UNKNOWN;
     }
 
     /**
@@ -113,7 +117,7 @@ class Calculator{
      * @param op operation to make
      * @param operand
      */
-    void operate(Operation op, double operand) {
+    void operate(const Operation op, const double operand) {
       switch(op) {
         case(Operation::ADD):
           add(operand);
@@ -129,11 +133,8 @@ class Calculator{
           break;
         case(Operation::EXIT):
         case(Operation::UNKNOWN):
-          return;
         default:
           return;
       }
     }
 };
-
-#endif //CALCULATOR_H
